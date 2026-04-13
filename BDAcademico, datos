@@ -1,0 +1,367 @@
+-- base de datos academico
+-- corregido para oracle
+
+-- nota: asegúrate de tener permisos para crear tablespaces o usa el de por defecto
+-- create tablespace tbs_academico datafile 'df_academico.dbf' size 100m;
+
+-- tabla carrera
+create table tcarrera (
+    codcarrera char(5) primary key,
+    carrera varchar2(50)
+);
+
+-- tabla usuario 
+create table tusuario (
+    usuario char(5) primary key,
+    contrasena char(5)
+);
+
+-- tabla asignatura
+-- nota: codrequisito es una clave foránea recursiva
+create table tasignatura (
+    codasignatura char(5) primary key,
+    asignatura varchar2(50),
+    codrequisito char(5),
+    constraint fk_requisito foreign key (codrequisito) references tasignatura(codasignatura)
+);
+
+-- tabla alumno
+create table talumno (
+    codalumno char(5) primary key,
+    apaterno varchar2(50),
+    amaterno varchar2(50),
+    nombres varchar2(50),
+    usuario char(5) unique,
+    codcarrera char(5),
+    constraint fk_alu_usuario foreign key (usuario) references tusuario(usuario),
+    constraint fk_alu_carrera foreign key (codcarrera) references tcarrera(codcarrera)
+);
+
+-- tabla docente
+create table tdocente (
+    coddocente char(5) primary key, -- corregido nombre para consistencia
+    apaterno varchar2(50),
+    amaterno varchar2(50),
+    nombres varchar2(50),
+    usuario char(5) unique,
+    constraint fk_doc_usuario foreign key (usuario) references tusuario(usuario)
+);
+
+-- tabla carga
+create table tcarga (
+    idcarga int primary key,
+    coddocente char(5),
+    codasignatura char(5),
+    semestre varchar2(50),
+    constraint fk_car_docente foreign key (coddocente) references tdocente(coddocente),
+    constraint fk_car_asignatura foreign key (codasignatura) references tasignatura(codasignatura)
+);
+
+-- tabla notas
+create table tnotas (
+    codalumno char(5),
+    codasignatura char(5),
+    semestre varchar2(50),
+    parcial1 number(4,2), -- en oracle se prefiere number para decimales
+    parcial2 number(4,2),
+    notafinal number(4,2),
+    primary key (codalumno, codasignatura, semestre),
+    constraint fk_not_alumno foreign key (codalumno) references talumno(codalumno),
+    constraint fk_not_asignatura foreign key (codasignatura) references tasignatura(codasignatura)
+);
+
+-- =============================================
+-- 1. TABLA CARRERA
+-- =============================================
+INSERT INTO TCarrera VALUES ('C0001','Sistemas');
+INSERT INTO TCarrera VALUES ('C0002','Enfermeria');
+INSERT INTO TCarrera VALUES ('C0003','Gatronomia');
+INSERT INTO TCarrera VALUES ('C0004','Redes');
+INSERT INTO TCarrera VALUES ('C0005','Diseño Grafico');
+INSERT INTO TCarrera VALUES ('C0006','Diseño Web');
+INSERT INTO TCarrera VALUES ('C0007','Contabilidad');
+INSERT INTO TCarrera VALUES ('C0008','Administracion');
+INSERT INTO TCarrera VALUES ('C0009','Secretariado');
+INSERT INTO TCarrera VALUES ('C0010','Marketing');
+
+SELECT * FROM TCarrera;
+
+-- =============================================
+-- 2. TABLA USUARIO
+-- =============================================
+INSERT INTO TUsuario VALUES ('U0001','123');
+INSERT INTO TUsuario VALUES ('U0002','234');
+INSERT INTO TUsuario VALUES ('U0003','345');
+INSERT INTO TUsuario VALUES ('U0004','456');
+INSERT INTO TUsuario VALUES ('U0005','567');
+INSERT INTO TUsuario VALUES ('U0006','678');
+INSERT INTO TUsuario VALUES ('U0007','789');
+INSERT INTO TUsuario VALUES ('U0008','891');
+INSERT INTO TUsuario VALUES ('U0009','912');
+INSERT INTO TUsuario VALUES ('U0010','101');
+INSERT INTO TUsuario VALUES ('U0011','102');
+INSERT INTO TUsuario VALUES ('U0012','103');
+INSERT INTO TUsuario VALUES ('U0013','104');
+INSERT INTO TUsuario VALUES ('U0014','105');
+INSERT INTO TUsuario VALUES ('U0015','106');
+INSERT INTO TUsuario VALUES ('U0016','107');
+INSERT INTO TUsuario VALUES ('U0017','108');
+INSERT INTO TUsuario VALUES ('U0018','109');
+INSERT INTO TUsuario VALUES ('U0019','110');
+INSERT INTO TUsuario VALUES ('U0020','111');
+INSERT INTO TUsuario VALUES ('U0021','112');
+INSERT INTO TUsuario VALUES ('U0022','113');
+INSERT INTO TUsuario VALUES ('U0023','114');
+INSERT INTO TUsuario VALUES ('U0024','115');
+INSERT INTO TUsuario VALUES ('U0025','116');
+INSERT INTO TUsuario VALUES ('U0026','117');
+INSERT INTO TUsuario VALUES ('U0027','118');
+INSERT INTO TUsuario VALUES ('U0028','119');
+INSERT INTO TUsuario VALUES ('U0029','120');
+INSERT INTO TUsuario VALUES ('U0030','121');
+INSERT INTO TUsuario VALUES ('U0031','122');
+INSERT INTO TUsuario VALUES ('U0032','123');
+INSERT INTO TUsuario VALUES ('U0033','124');
+INSERT INTO TUsuario VALUES ('U0034','125');
+INSERT INTO TUsuario VALUES ('U0035','126');
+INSERT INTO TUsuario VALUES ('U0036','127');
+INSERT INTO TUsuario VALUES ('U0037','128');
+INSERT INTO TUsuario VALUES ('U0038','129');
+INSERT INTO TUsuario VALUES ('U0039','130');
+INSERT INTO TUsuario VALUES ('U0040','131');
+
+SELECT * FROM TUsuario;
+
+-- =============================================
+-- 3. TABLA ALUMNO
+-- =============================================
+INSERT INTO TAlumno VALUES ('A0001','Perez','Quispe','Juan','U0001','C0001');
+INSERT INTO TAlumno VALUES ('A0002','Salazar','Magariño','Jose','U0002','C0002');
+INSERT INTO TAlumno VALUES ('A0003','Dominguez','Rodriguez','Sabrina','U0003','C0003');
+INSERT INTO TAlumno VALUES ('A0004','Alveda','Villar','Mariela','U0004','C0004');
+INSERT INTO TAlumno VALUES ('A0005','Hurtado','Espinoza','Monica','U0005','C0005');
+INSERT INTO TAlumno VALUES ('A0006','Rojas','Molina','Oscar','U0006','C0006');
+INSERT INTO TAlumno VALUES ('A0007','Alcala','Muñoz','Pedro','U0007','C0007');
+INSERT INTO TAlumno VALUES ('A0008','Zamudio','Arriola','Mario','U0008','C0008');
+INSERT INTO TAlumno VALUES ('A0009','Avila','Estrada','Alejandro','U0009','C0009');
+INSERT INTO TAlumno VALUES ('A0010','Palomino','Jimenez','Micaela','U0010','C0010');
+
+SELECT * FROM TAlumno;
+
+-- =============================================
+-- 4. TABLA ASIGNATURA
+-- =============================================
+INSERT INTO TAsignatura VALUES ('AS001','Modelamiento de Base de datos','AS001');
+INSERT INTO TAsignatura VALUES ('AS002','Base de datos 1','AS001');
+INSERT INTO TAsignatura VALUES ('AS003','Base de datos 2','AS003');
+INSERT INTO TAsignatura VALUES ('AS004','Base de datos Avanzado','AS004');
+INSERT INTO TAsignatura VALUES ('AS005','Reparacion y mantenimiento de Hardware','AS005');
+INSERT INTO TAsignatura VALUES ('AS006','Estructura de datos I','AS006');
+INSERT INTO TAsignatura VALUES ('AS007','Desarrollo e implementacion de escritorio','AS007');
+INSERT INTO TAsignatura VALUES ('AS008','Sistemas operativos 1','AS008');
+INSERT INTO TAsignatura VALUES ('AS009','Sistemas operativos 2','AS009');
+INSERT INTO TAsignatura VALUES ('AS010','Lenguaje de programacion 1','AS010');
+INSERT INTO TAsignatura VALUES ('AS011','Lenguaje de programacion 2','AS011');
+INSERT INTO TAsignatura VALUES ('AS012','Diseño web','AS012');
+INSERT INTO TAsignatura VALUES ('AS013','Taller de Ofimatica','AS013');
+INSERT INTO TAsignatura VALUES ('AS014','Excel 1','AS014');
+INSERT INTO TAsignatura VALUES ('AS015','Excel 2','AS015');
+INSERT INTO TAsignatura VALUES ('AS016','Excel 3','AS016');
+INSERT INTO TAsignatura VALUES ('AS017','Administracion de Base de Datos','AS017');
+INSERT INTO TAsignatura VALUES ('AS018','Primeros Auxilios','AS018');
+INSERT INTO TAsignatura VALUES ('AS019','Matematica 1','AS019');
+INSERT INTO TAsignatura VALUES ('AS020','Matematica 2','AS020');
+INSERT INTO TAsignatura VALUES ('AS021','Hardware 1','AS021');
+INSERT INTO TAsignatura VALUES ('AS022','Hardware 2','AS022');
+INSERT INTO TAsignatura VALUES ('AS023','Cableado estructurado','AS023');
+INSERT INTO TAsignatura VALUES ('AS024','Modelamiento y diseño de sistemas','AS024');
+INSERT INTO TAsignatura VALUES ('AS025','Base de datos I','AS025');
+INSERT INTO TAsignatura VALUES ('AS026','Base de datos I','AS026');
+INSERT INTO TAsignatura VALUES ('AS027','Base de datos I','AS027');
+INSERT INTO TAsignatura VALUES ('AS028','Base de datos I','AS028');
+INSERT INTO TAsignatura VALUES ('AS029','Base de datos I','AS029');
+INSERT INTO TAsignatura VALUES ('AS030','Base de datos I','AS030');
+INSERT INTO TAsignatura VALUES ('AS031','Base de datos I','AS031');
+INSERT INTO TAsignatura VALUES ('AS032','Base de datos I','AS032');
+INSERT INTO TAsignatura VALUES ('AS033','Base de datos I','AS033');
+INSERT INTO TAsignatura VALUES ('AS034','Base de datos I','AS034');
+INSERT INTO TAsignatura VALUES ('AS035','Base de datos I','AS035');
+INSERT INTO TAsignatura VALUES ('AS036','Base de datos I','AS036');
+INSERT INTO TAsignatura VALUES ('AS037','Base de datos I','AS037');
+INSERT INTO TAsignatura VALUES ('AS038','Base de datos I','AS038');
+INSERT INTO TAsignatura VALUES ('AS039','Base de datos I','AS039');
+INSERT INTO TAsignatura VALUES ('AS040','Base de datos I','AS040');
+
+SELECT * FROM TAsignatura;
+
+-- =============================================
+-- 5. TABLA NOTAS
+-- =============================================
+INSERT INTO TNotas VALUES('A0001','AS001','Primer Semestre',14.5,15,14.75);
+INSERT INTO TNotas VALUES('A0002','AS002','Segundo Semestre',14.3,15.5,14.9);
+INSERT INTO TNotas VALUES('A0003','AS003','Primer Semestre',13.8,16,14.9);
+INSERT INTO TNotas VALUES('A0004','AS004','Segundo Semestre',10.9,15,12.95);
+INSERT INTO TNotas VALUES('A0005','AS005','Primer Semestre',17.1,14,15.55);
+INSERT INTO TNotas VALUES('A0006','AS006','Segundo Semestre',19,18,18.5);
+INSERT INTO TNotas VALUES('A0007','AS007','Primer Semestre',16,17,16.5);
+INSERT INTO TNotas VALUES('A0008','AS008','Segundo Semestre',17.3,11,14.15);
+INSERT INTO TNotas VALUES('A0009','AS009','Primer Semestre',13,15.3,14.15);
+INSERT INTO TNotas VALUES('A0010','AS010','Segundo Semestre',11.5,20,15.75);
+INSERT INTO TNotas VALUES('A0001','AS011','Primer Semestre',09,14,11.5);
+INSERT INTO TNotas VALUES('A0002','AS012','Segundo Semestre',18.2,11,14.6);
+INSERT INTO TNotas VALUES('A0003','AS013','Primer Semestre',01,15,8);
+INSERT INTO TNotas VALUES('A0004','AS014','Segundo Semestre',14,15.6,14.8);
+INSERT INTO TNotas VALUES('A0005','AS015','Primer Semestre',15,15.8,15.4);
+INSERT INTO TNotas VALUES('A0006','AS016','Segundo Semestre',13.9,19,16.45);
+INSERT INTO TNotas VALUES('A0007','AS017','Primer Semestre',14,15,14.5);
+INSERT INTO TNotas VALUES('A0008','AS018','Segundo Semestre',14.3,18,16.5);
+INSERT INTO TNotas VALUES('A0009','AS019','Primer Semestre',17,08,12.5);
+INSERT INTO TNotas VALUES('A0010','AS020','Segundo Semestre',19,19,19);
+INSERT INTO TNotas VALUES('A0001','AS022','Primer Semestre',20,09,14.5);
+INSERT INTO TNotas VALUES('A0002','AS023','Segundo Semestre',19,02,10.5);
+INSERT INTO TNotas VALUES('A0003','AS023','Primer Semestre',08,16.7,12.35);
+INSERT INTO TNotas VALUES('A0004','AS024','Segundo Semestre',08,18.1,13.05);
+INSERT INTO TNotas VALUES('A0005','AS025','Primer Semestre',09,15.5,12.5);
+INSERT INTO TNotas VALUES('A0006','AS026','Segundo Semestre',14,17.8,15.9);
+INSERT INTO TNotas VALUES('A0007','AS027','Primer Semestre',13,15.5,14.25);
+INSERT INTO TNotas VALUES('A0008','AS028','Segundo Semestre',14,15.9,14.95);
+INSERT INTO TNotas VALUES('A0009','AS029','Primer Semestre',14,19,16.5);
+INSERT INTO TNotas VALUES('A0010','AS030','Segundo Semestre',03,20,11.5);
+INSERT INTO TNotas VALUES('A0001','AS031','Primer Semestre',14.9,09,11.95);
+INSERT INTO TNotas VALUES('A0002','AS032','Segundo Semestre',19,03,11);
+INSERT INTO TNotas VALUES('A0003','AS033','Primer Semestre',13,19,16);
+INSERT INTO TNotas VALUES('A0004','AS034','Segundo Semestre',13,03,8);
+INSERT INTO TNotas VALUES('A0005','AS035','Primer Semestre',12,16,14);
+INSERT INTO TNotas VALUES('A0006','AS036','Segundo Semestre',11,03,7);
+INSERT INTO TNotas VALUES('A0007','AS037','Primer Semestre',16,03,9.5);
+INSERT INTO TNotas VALUES('A0008','AS038','Segundo Semestre',05,19,12);
+INSERT INTO TNotas VALUES('A0009','AS039','Primer Semestre',20,13,16.5);
+INSERT INTO TNotas VALUES('A0010','AS040','Segundo Semestre',19,18,18.5);
+
+SELECT * FROM TNotas;
+
+-- =============================================
+-- 6. TABLA DOCENTE
+-- =============================================
+INSERT INTO TDocente VALUES ('D0001','Salazar','Bautista','Sonia','U0001');
+INSERT INTO TDocente VALUES ('D0002','Mendoza','Prada','Pamela','U0002');
+INSERT INTO TDocente VALUES ('D0003','Aguilar','Carvajal','Jorge','U0003');
+INSERT INTO TDocente VALUES ('D0004','Barragán','Figueroa','Alonso','U0004');
+INSERT INTO TDocente VALUES ('D0005','Garrido','Llano','Luis','U0005');
+INSERT INTO TDocente VALUES ('D0006','Lara','Pardo','Leo','U0006');
+INSERT INTO TDocente VALUES ('D0007','Madrigal','Oliver','Arturo','U0007');
+INSERT INTO TDocente VALUES ('D0008','Paredes','Prada','Rodolfo','U0008');
+INSERT INTO TDocente VALUES ('D0009','Vidal','Pastor','Renzo','U0009');
+INSERT INTO TDocente VALUES ('D0010','Zurita','Prada','Miguel','U0010');
+INSERT INTO TDocente VALUES ('D0011','Suárez','Alcántara','Jhony','U0011');
+INSERT INTO TDocente VALUES ('D0012','Romero','Ocaña','Tiago','U0012');
+INSERT INTO TDocente VALUES ('D0013','Segura','Toledo','Fernando','U0013');
+INSERT INTO TDocente VALUES ('D0014','Taboada','Ocaña','Facundo','U0014');
+INSERT INTO TDocente VALUES ('D0015','Salazar','Paz','Adriano','U0015');
+INSERT INTO TDocente VALUES ('D0016','Mariño','Quesada','Fatima','U0016');
+INSERT INTO TDocente VALUES ('D0017','Roldán','Olmedo','Amelia','U0017');
+INSERT INTO TDocente VALUES ('D0018','Santos','Olmo','Roxana','U0018');
+INSERT INTO TDocente VALUES ('D0019','Quintanilla','Prada','Mafer','U0019');
+INSERT INTO TDocente VALUES ('D0020','Peña','Manzanares','Alizon','U0020');
+INSERT INTO TDocente VALUES ('D0021','Montesinos','Ordóñez','Joselin','U0021');
+INSERT INTO TDocente VALUES ('D0022','Montes','Ortega','Gustavo','U0022');
+INSERT INTO TDocente VALUES ('D0023','Morón','Pereira','Cesar','U0023');
+INSERT INTO TDocente VALUES ('D0024','Pavón','Ortiz','Miqueas','U0024');
+INSERT INTO TDocente VALUES ('D0025','Pazos','Núñez','David','U0025');
+INSERT INTO TDocente VALUES ('D0026','Salazar','Pedraza','Dario','U0026');
+INSERT INTO TDocente VALUES ('D0027','Morales','Navas','Gino','U0027');
+INSERT INTO TDocente VALUES ('D0028','Salazar','Otero','Paolo','U0028');
+INSERT INTO TDocente VALUES ('D0029','Salazar','Novoa','Federico','U0029');
+INSERT INTO TDocente VALUES ('D0030','Ponce','Neira','Hernan','U0030');
+INSERT INTO TDocente VALUES ('D0031','Pineda','Lerma','Henry','U0031');
+INSERT INTO TDocente VALUES ('D0032','Lumbreras','Machado','Juan Jose','U0032');
+INSERT INTO TDocente VALUES ('D0033','Pinedo','Román','Emilia','U0033');
+INSERT INTO TDocente VALUES ('D0034','Moya','Pérez','Mirian','U0034');
+INSERT INTO TDocente VALUES ('D0035','Lerma','Piñeiro','Perla','U0035');
+INSERT INTO TDocente VALUES ('D0036','León','Prada','Lourdes','U0036');
+INSERT INTO TDocente VALUES ('D0037','Mosquera','Morcillo','Patricio','U0037');
+INSERT INTO TDocente VALUES ('D0038','Losada','Piña','Fiorella','U0038');
+INSERT INTO TDocente VALUES ('D0039','Luján','Mora','Elsa','U0039');
+INSERT INTO TDocente VALUES ('D0040','Morera','Muro','Denis','U0040');
+
+SELECT * FROM TDocente;
+
+-- =============================================
+-- 7. TABLA CARGA
+-- =============================================
+INSERT INTO TCarga VALUES('1','D0001','AS001','Primer Semestre');
+INSERT INTO TCarga VALUES('2','D0002','AS002','Segundo Semestre');
+INSERT INTO TCarga VALUES('3','D0003','AS003','Primer Semestre');
+INSERT INTO TCarga VALUES('4','D0004','AS004','Segundo Semestre');
+INSERT INTO TCarga VALUES('5','D0005','AS005','Primer Semestre');
+INSERT INTO TCarga VALUES('6','D0006','AS006','Segundo Semestre');
+INSERT INTO TCarga VALUES('7','D0007','AS007','Primer Semestre');
+INSERT INTO TCarga VALUES('8','D0008','AS008','Segundo Semestre');
+INSERT INTO TCarga VALUES('9','D0009','AS009','Primer Semestre');
+INSERT INTO TCarga VALUES('10','D0010','AS010','Segundo Semestre');
+INSERT INTO TCarga VALUES('11','D0011','AS011','Primer Semestre');
+INSERT INTO TCarga VALUES('12','D0012','AS012','Segundo Semestre');
+INSERT INTO TCarga VALUES('13','D0013','AS013','Primer Semestre');
+INSERT INTO TCarga VALUES('14','D0014','AS014','Segundo Semestre');
+INSERT INTO TCarga VALUES('15','D0015','AS015','Primer Semestre');
+INSERT INTO TCarga VALUES('16','D0016','AS016','Segundo Semestre');
+INSERT INTO TCarga VALUES('17','D0017','AS017','Primer Semestre');
+INSERT INTO TCarga VALUES('18','D0018','AS018','Segundo Semestre');
+INSERT INTO TCarga VALUES('19','D0019','AS019','Primer Semestre');
+INSERT INTO TCarga VALUES('20','D0020','AS020','Segundo Semestre');
+INSERT INTO TCarga VALUES('21','D0021','AS021','Primer Semestre');
+INSERT INTO TCarga VALUES('22','D0022','AS022','Segundo Semestre');
+INSERT INTO TCarga VALUES('23','D0023','AS023','Primer Semestre');
+INSERT INTO TCarga VALUES('24','D0024','AS024','Segundo Semestre');
+INSERT INTO TCarga VALUES('25','D0025','AS025','Primer Semestre');
+INSERT INTO TCarga VALUES('26','D0026','AS026','Segundo Semestre');
+INSERT INTO TCarga VALUES('27','D0027','AS027','Primer Semestre');
+INSERT INTO TCarga VALUES('28','D0028','AS028','Segundo Semestre');
+INSERT INTO TCarga VALUES('29','D0029','AS029','Primer Semestre');
+INSERT INTO TCarga VALUES('30','D0030','AS030','Segundo Semestre');
+INSERT INTO TCarga VALUES('31','D0031','AS031','Primer Semestre');
+INSERT INTO TCarga VALUES('32','D0032','AS032','Segundo Semestre');
+INSERT INTO TCarga VALUES('33','D0033','AS033','Primer Semestre');
+INSERT INTO TCarga VALUES('34','D0034','AS034','Segundo Semestre');
+INSERT INTO TCarga VALUES('35','D0035','AS035','Primer Semestre');
+INSERT INTO TCarga VALUES('36','D0036','AS036','Segundo Semestre');
+INSERT INTO TCarga VALUES('37','D0037','AS037','Primer Semestre');
+INSERT INTO TCarga VALUES('38','D0038','AS038','Segundo Semestre');
+INSERT INTO TCarga VALUES('39','D0039','AS039','Primer Semestre');
+INSERT INTO TCarga VALUES('40','D0040','AS040','Segundo Semestre');
+
+SELECT * FROM TCarga;
+
+-- Relacion de alumnos que estudian sistemas
+select a.*
+from tcarrera c
+join talumno a on c.codcarrera = a.codcarrera
+where c.carrera = 'Sistemas';
+
+-- Relacion de coente con su respectiva Carga
+select 
+    d.apaterno, 
+    d.amaterno, 
+    d.nombres, 
+    asig.asignatura, 
+    car.semestre
+from tdocente d
+join tcarga car on d.coddocente = car.coddocente
+join tasignatura asig on car.codasignatura = asig.codasignatura;
+
+-- Ficha de seguimineto
+select 
+    alu.apaterno, 
+    alu.amaterno, 
+    alu.nombres,
+    asig.asignatura,
+    n.notafinal,
+    case 
+        when n.notafinal >= 13.5 then 'aprobado'
+        else 'desaprobado'
+    end as estado,
+    n.semestre
+from talumno alu
+join tnotas n on alu.codalumno = n.codalumno
+join tasignatura asig on n.codasignatura = asig.codasignatura
+where alu.codalumno = 'A0001';
