@@ -3,154 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taller 2.3: Vistas y Consultas Avanzadas - Clínica TodoSalud</title>
+    <title>Documentación de Base de Datos Clínica - Paolo Zavaleta</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        pre {
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            padding: 1.5rem;
-            border-radius: 0.5rem;
-            overflow-x: auto;
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-        }
-        .sql-keyword { color: #569cd6; }
-        .sql-table { color: #4ec9b0; }
-        .sql-string { color: #ce9178; }
-        .sql-comment { color: #6a9955; }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans leading-normal">
+<body class="bg-gray-900 text-gray-100 font-sans leading-normal tracking-normal">
 
-    <!-- Header / Hero Section -->
-    <header class="bg-blue-900 text-white py-12 shadow-lg">
-        <div class="container mx-auto px-4 text-center">
-            <h1 class="text-4xl font-bold mb-2">Taller 2.3: Gestión de Vistas (VIEW)</h1>
-            <p class="text-xl text-blue-200">Escuela Profesional de Ingeniería de Sistemas - UAC</p>
-            <div class="mt-6 flex justify-center space-x-4 text-sm">
-                <span class="bg-blue-800 px-3 py-1 rounded-full"><i class="fas fa-user mr-2"></i>Paolo Zavaleta Fuentes</span>
-                <span class="bg-blue-800 px-3 py-1 rounded-full"><i class="fas fa-calendar mr-2"></i>Cusco, 2026</span>
-            </div>
+    <nav class="bg-blue-600 p-4 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">SQL Hospital Project</h1>
+            <p class="text-sm opacity-80">Autor: Zavaleta Fuentes Paolo Enrique</p>
         </div>
-    </header>
+    </nav>
 
-    <main class="container mx-auto px-4 py-10 max-w-5xl">
+    <main class="container mx-auto mt-10 px-4 pb-20">
         
-        <!-- Introducción -->
-        <section class="mb-12">
-            <div class="flex items-center mb-4">
-                <i class="fas fa-info-circle text-blue-600 text-2xl mr-3"></i>
-                <h2 class="text-2xl font-bold text-gray-700">Introducción</h2>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-600">
-                <p class="mb-4">
-                    Este proyecto detalla la creación de objetos de base de datos tipo <strong>Vista (VIEW)</strong> y consultas avanzadas aplicadas al sistema de la <strong>Clínica TodoSalud</strong>.
-                </p>
-                <p>
-                    El objetivo principal es consolidar información distribuida en múltiples tablas normalizadas (Pacientes, Médicos, Diagnósticos y Especialidades) para facilitar la auditoría operativa y transformar datos crudos en información estratégica.
-                </p>
+        <section class="mb-12 text-center">
+            <h2 class="text-4xl font-extrabold text-blue-400 mb-4">Sistema de Gestión de Diagnósticos Médicos</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">
+                Este proyecto contiene el diseño lógico y físico de una base de datos relacional para una clínica, 
+                incluyendo la gestión de pacientes, médicos, especialidades y el histórico de diagnósticos.
+            </p>
+            <div class="mt-6">
+                <span class="bg-blue-900 text-blue-200 px-3 py-1 rounded-full text-xs font-semibold uppercase">Oracle SQL</span>
+                <span class="bg-green-900 text-green-200 px-3 py-1 rounded-full text-xs font-semibold uppercase">DML & DDL</span>
+                <span class="bg-purple-900 text-purple-200 px-3 py-1 rounded-full text-xs font-semibold uppercase">Views</span>
             </div>
         </section>
 
-        <!-- Modelo de Datos -->
-        <section class="mb-12">
-            <div class="flex items-center mb-4">
-                <i class="fas fa-database text-blue-600 text-2xl mr-3"></i>
-                <h2 class="text-2xl font-bold text-gray-700">Estructura y Datos Iniciales</h2>
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-md">
+                <h3 class="text-xl font-semibold text-blue-300 mb-3 border-b border-gray-600 pb-2">Estructura Principal</h3>
+                <ul class="list-disc list-inside space-y-2 text-gray-300">
+                    <li><strong class="text-white">Entidades:</strong> Pacientes, Médicos, Especialidades y Enfermedades.</li>
+                    <li><strong class="text-white">Relaciones:</strong> Un médico puede tener varias especialidades y un diagnóstico puede involucrar múltiples enfermedades.</li>
+                    <li><strong class="text-white">Integridad:</strong> Uso de llaves primarias, foráneas y eliminaciones en cascada.</li>
+                </ul>
             </div>
-            <p class="mb-4 text-gray-600">Se definieron 7 tablas principales con integridad referencial (Foreign Keys) para asegurar la consistencia del sistema médico.</p>
-            
-            <div class="grid md:grid-cols-2 gap-4 mb-6">
-                <div class="bg-gray-100 p-4 rounded border">
-                    <h3 class="font-bold mb-2"><i class="fas fa-table mr-2"></i>Tablas Maestras</h3>
-                    <ul class="list-disc ml-5 text-sm">
-                        <li><code>tpaciente</code>: Datos personales de pacientes.</li>
-                        <li><code>tmedico</code>: Registro de personal médico.</li>
-                        <li><code>tespecialidad</code>: Catálogo de especialidades médicas.</li>
-                        <li><code>tenfermedad</code>: Catálogo de enfermedades.</li>
-                    </ul>
-                </div>
-                <div class="bg-gray-100 p-4 rounded border">
-                    <h3 class="font-bold mb-2"><i class="fas fa-link mr-2"></i>Tablas Relacionales</h3>
-                    <ul class="list-disc ml-5 text-sm">
-                        <li><code>tdiagnostico</code>: Vincula pacientes con médicos.</li>
-                        <li><code>tespecialidaddelmedico</code>: Acreditación médica.</li>
-                        <li><code>tenfermedadeneldiagnostico</code>: Detalle de enfermedades detectadas.</li>
-                    </ul>
-                </div>
+            <div class="bg-gray-800 p-6 rounded-lg border border-gray-700 shadow-md">
+                <h3 class="text-xl font-semibold text-blue-300 mb-3 border-b border-gray-600 pb-2">Información del Autor</h3>
+                <p class="text-gray-300"><strong>Nombre:</strong> Paolo Enrique Zavaleta Fuentes</p>
+                <p class="text-gray-300"><strong>Fecha de entrega:</strong> 22/04/2026</p>
+                <p class="text-gray-300 mt-2"><strong>Objetivo:</strong> Implementación de consultas complejas y optimización de reportes mediante vistas.</p>
             </div>
         </section>
 
-        <!-- Desarrollo SQL -->
-        <section class="mb-12">
-            <div class="flex items-center mb-6">
-                <i class="fas fa-code text-blue-600 text-2xl mr-3"></i>
-                <h2 class="text-2xl font-bold text-gray-700">Implementación de Vistas</h2>
+        <section class="bg-gray-800 rounded-lg overflow-hidden shadow-2xl">
+            <div class="flex items-center justify-between px-4 py-2 bg-gray-700">
+                <span class="text-xs uppercase font-bold tracking-widest text-gray-400">script_clinica.sql</span>
+                <button class="bg-blue-500 hover:bg-blue-600 text-white text-xs px-3 py-1 rounded transition">Copiar Código</button>
             </div>
+            <pre class="p-4 overflow-x-auto"><code class="language-sql">
+-- =============================================
+-- PROYECTO: GESTIÓN DE DIAGNÓSTICOS CLÍNICOS
+-- AUTOR: ZAVALETA FUENTES PAOLO ENRIQUE
+-- FECHA: 22/04/2026
+-- =============================================
 
-            <!-- Paso 1: Médicos y Especialidades -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-3 text-blue-800">1. Consolidación Médica (JOINS)</h3>
-                <p class="mb-4">Para evitar consultas complejas recurrentes, creamos una vista que une médicos con sus respectivas especialidades.</p>
-                <pre><code><span class="sql-comment">-- Crear vista de médicos y sus especialidades</span>
-<span class="sql-keyword">CREATE VIEW</span> v_medicos_especialidades <span class="sql-keyword">AS</span>
-<span class="sql-keyword">SELECT</span> m.*, e.nombreesp, e.descripcionesp, em.fechaobtencion
-<span class="sql-keyword">FROM</span> tmedico m
-<span class="sql-keyword">JOIN</span> tespecialidaddelmedico em <span class="sql-keyword">ON</span> m.codm = em.codm
-<span class="sql-keyword">JOIN</span> tespecialidad e <span class="sql-keyword">ON</span> em.codesp = e.codesp;</code></pre>
-            </div>
+-- 1. ELIMINACIÓN DE TABLAS EXISTENTES
+drop table tenfermedadeneldiagnostico cascade constraints;
+drop table tespecialidaddelmedico cascade constraints;
+drop table tdiagnostico cascade constraints;
+drop table tenfermedad cascade constraints;
+drop table tespecialidad cascade constraints;
+drop table tmedico cascade constraints;
+drop table tpaciente cascade constraints;
 
-            <!-- Paso 2: Agregaciones -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-3 text-blue-800">2. Análisis de Alta Especialización</h3>
-                <p class="mb-4">Utilizando la cláusula <code>HAVING</code> sobre la vista anterior para identificar médicos con 2 o más especialidades.</p>
-                <pre><code><span class="sql-keyword">SELECT</span> nombresm, paternom, maternom, <span class="sql-keyword">COUNT</span>(*) <span class="sql-keyword">AS</span> cantidad
-<span class="sql-keyword">FROM</span> v_medicos_especialidades
-<span class="sql-keyword">GROUP BY</span> nombresm, paternom, maternom
-<span class="sql-keyword">HAVING COUNT</span>(*) >= 2;</code></pre>
-            </div>
+-- 2. CREACIÓN DE LA ESTRUCTURA (DDL)
+create table tpaciente (
+    codp varchar2(4) primary key,
+    tipodocp varchar2(15),
+    nrodocp varchar2(12),
+    paternop varchar2(50),
+    maternop varchar2(50),
+    nombresp varchar2(50),
+    fechanacimientop date,
+    generop char(1)
+);
 
-            <!-- Paso 3: Identificación de Brechas -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-3 text-blue-800">3. Detección de Brechas y Registros Huérfanos</h3>
-                <p class="mb-4">Mediante subconsultas de exclusión (<code>NOT IN</code>), identificamos especialidades sin cobertura y enfermedades no detectadas aún.</p>
-                <pre><code><span class="sql-comment">-- Especialidades sin médico asociado</span>
-<span class="sql-keyword">CREATE OR REPLACE VIEW</span> v_especialidades_sin_medico <span class="sql-keyword">AS</span>
-<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> tespecialidad
-<span class="sql-keyword">WHERE</span> codesp <span class="sql-keyword">NOT IN</span> (<span class="sql-keyword">SELECT</span> codesp <span class="sql-keyword">FROM</span> tespecialidaddelmedico);</code></pre>
-            </div>
+create table tmedico (
+    codm varchar2(4) primary key,
+    tipodocm varchar2(15),
+    nrodocm varchar2(12),
+    paternom varchar2(50),
+    maternom varchar2(50),
+    nombresm varchar2(50),
+    celularm varchar2(12),
+    fechanacimientom date,
+    generom char(1)
+);
+
+create table tespecialidad (
+    codesp varchar2(4) primary key,
+    nombreesp varchar2(70),
+    descripcionesp varchar2(100)
+);
+
+create table tenfermedad (
+    code varchar2(4) primary key,
+    nombree varchar2(50),
+    descripcione varchar2(100)
+);
+
+create table tdiagnostico (
+    codd varchar2(4) primary key,
+    fechahorad timestamp,
+    descripciond varchar2(100),
+    codp varchar2(4),
+    codm varchar2(4),
+    foreign key (codp) references tpaciente(codp),
+    foreign key (codm) references tmedico(codm)
+);
+
+create table tespecialidaddelmedico (
+    codespm varchar2(4) primary key,
+    codesp varchar2(4),
+    codm varchar2(4),
+    fechaobtencion date,
+    foreign key (codesp) references tespecialidad(codesp),
+    foreign key (codm) references tmedico(codm)
+);
+
+create table tenfermedadeneldiagnostico (
+    coded varchar2(4) primary key,
+    code varchar2(4),
+    codd varchar2(4),
+    foreign key (code) references tenfermedad(code),
+    foreign key (codd) references tdiagnostico(codd)
+);
+
+-- 3. INSERCIÓN DE DATOS DE PRUEBA (DML)
+insert into tpaciente values ('p01','dni','11111111','salas','rivas','juan',date '2000-02-02','m');
+insert into tpaciente values ('p02','dni','22222222','perez','rozas','elena',date '2020-10-01','f');
+
+insert into tmedico values ('m1','dni','33333333','zela','ramirez','javier','999999999',date '1970-10-10','m');
+insert into tmedico values ('m2','carnet','7777','cabral','desousa','alejandra','988888877',date '1975-12-06','f');
+
+insert into tespecialidad values ('esp1','otorrinolaringologia','ojos nariz y boca');
+insert into tespecialidad values ('esp2','pediatria','neonato niño adolescente');
+insert into tespecialidad values ('esp3','cardiologia','corazon sistema circulatorio');
+insert into tespecialidad values ('esp4','odontologia','dientes encias');
+
+-- 4. VISTAS Y REPORTES
+-- Consulta de médicos y sus especialidades
+create view v_medicos_especialidades as
+select m.*, e.nombreesp, e.descripcionesp, em.fechaobtencion
+from tmedico m
+join tespecialidaddelmedico em on m.codm = em.codm
+join tespecialidad e on em.codesp = e.codesp;
+
+-- Médicos con 2 o más especialidades
+select nombresm, paternom, maternom, count(*) as cantidad_especialidades
+from v_medicos_especialidades
+group by nombresm, paternom, maternom
+having count(*) >= 2;
+            </code></pre>
         </section>
 
-        <!-- Conclusiones -->
-        <section class="mb-12 bg-blue-50 p-8 rounded-xl border border-blue-100">
-            <h2 class="text-2xl font-bold mb-4 text-blue-900">Conclusiones</h2>
-            <ul class="space-y-4">
-                <li class="flex items-start">
-                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                    <span>La implementación de <strong>Vistas</strong> optimiza el rendimiento del equipo de desarrollo al simplificar el acceso a datos complejos.</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                    <span>El uso de <code>NOT IN</code> permite realizar auditorías de calidad de datos, detectando diagnósticos incompletos o falta de cobertura médica.</span>
-                </li>
-                <li class="flex items-start">
-                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                    <span>Estas herramientas transforman una base de datos operativa en un activo estratégico para la toma de decisiones en salud.</span>
-                </li>
-            </ul>
-        </section>
-
-        <!-- Footer / Links -->
-        <footer class="text-center text-gray-500 text-sm border-t pt-8">
-            <p class="mb-4">Desarrollado para la asignatura de Modelado de Bases de Datos.</p>
-            <div class="flex justify-center space-x-6">
-                <a href="#" class="hover:text-blue-600 transition-colors"><i class="fab fa-github mr-1"></i> Repositorio</a>
-                <a href="#" class="hover:text-blue-600 transition-colors"><i class="fas fa-file-pdf mr-1"></i> Descargar PDF</a>
-            </div>
+        <footer class="mt-16 pt-8 border-t border-gray-800 text-center text-gray-500">
+            <p>&copy; 2026 Paolo Enrique Zavaleta Fuentes - Proyecto Académico SQL</p>
         </footer>
+
     </main>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
 </body>
 </html>
