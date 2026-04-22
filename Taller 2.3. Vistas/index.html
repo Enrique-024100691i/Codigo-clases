@@ -3,51 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Documentación SQL - Clínica Médica</title>
+    <title>Proyecto Clínica - Paolo Enrique Zavaleta Fuentes</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.354.0/umd/lucide.min.js"></script>
     <style>
-        pre { border-radius: 8px; margin-top: 1rem !important; }
-        .gradient-bg { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .code-block { border-radius: 8px; overflow: hidden; }
+        pre { margin: 0 !important; }
+        .sticky-nav { position: sticky; top: 0; z-index: 50; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
+<body class="bg-gray-50 text-gray-900">
 
-    <header class="gradient-bg text-white py-16 px-6 shadow-xl">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Gestión de Clínica Médica</h1>
-            <p class="text-blue-300 text-lg font-medium">Implementación de Base de Datos Relacional en Oracle SQL</p>
-            <div class="mt-6 flex flex-wrap gap-4 text-sm">
-                <span class="bg-blue-900/50 border border-blue-500 px-3 py-1 rounded-full text-blue-100">📅 22/04/2026</span>
-                <span class="bg-blue-900/50 border border-blue-500 px-3 py-1 rounded-full text-blue-100">👤 Paolo Enrique Zavaleta Fuentes</span>
+    <!-- Header / Navbar -->
+    <nav class="bg-slate-900 text-white p-4 sticky-nav shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i data-lucide="database" class="text-blue-400"></i>
+                <span class="font-bold text-xl tracking-tight">SQL Portfolio</span>
+            </div>
+            <div class="hidden md:flex gap-6 text-sm font-medium">
+                <a href="#modelo" class="hover:text-blue-400 transition">Modelo</a>
+                <a href="#tablas" class="hover:text-blue-400 transition">Tablas</a>
+                <a href="#codigo" class="hover:text-blue-400 transition">Código SQL</a>
+                <a href="#vistas" class="hover:text-blue-400 transition">Vistas y Consultas</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="bg-white border-b border-gray-200 py-12">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl font-extrabold text-slate-800 mb-2">Sistema de Gestión Clínica</h1>
+            <p class="text-lg text-gray-600 max-w-2xl">Implementación de base de datos relacional para la gestión de pacientes, médicos, especialidades y diagnósticos.</p>
+            
+            <div class="mt-8 flex flex-wrap gap-4">
+                <div class="bg-blue-50 border border-blue-100 p-4 rounded-lg flex items-center gap-3">
+                    <i data-lucide="user" class="text-blue-600"></i>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Autor</p>
+                        <p class="font-medium">Zavaleta Fuentes Paolo Enrique</p>
+                    </div>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-lg flex items-center gap-3">
+                    <i data-lucide="calendar" class="text-emerald-600"></i>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Fecha de Entrega</p>
+                        <p class="font-medium">22 de Abril, 2026</p>
+                    </div>
+                </div>
+                <div class="bg-purple-50 border border-purple-100 p-4 rounded-lg flex items-center gap-3">
+                    <i data-lucide="server" class="text-purple-600"></i>
+                    <div>
+                        <p class="text-xs text-gray-500 uppercase font-semibold">Tecnología</p>
+                        <p class="font-medium">Oracle SQL / PL-SQL</p>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto py-12 px-6">
-        
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold border-b-2 border-blue-500 pb-2 mb-4">Descripción del Proyecto</h2>
-            <p class="text-gray-600 leading-relaxed">
-                Este script automatiza la creación, poblamiento y consulta de una base de datos para una clínica. 
-                Gestiona la relación entre <strong>pacientes, médicos, especialidades y diagnósticos</strong>, permitiendo 
-                identificar patrones de salud y especialización del personal médico.
-            </p>
+    <main class="container mx-auto px-4 py-12 space-y-16">
+
+        <!-- Sección: Modelo de Datos -->
+        <section id="modelo" class="scroll-mt-20">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                <i data-lucide="layout" class="text-blue-600"></i> Modelo Relacional
+            </h2>
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                <p class="mb-6 text-gray-700 leading-relaxed">
+                    El diseño se basa en una estructura centralizada en el <strong>Diagnóstico</strong>, el cual vincula al Paciente con el Médico. Además, se implementa una relación de muchos a muchos entre Médicos y Especialidades, y entre Diagnósticos y Enfermedades.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-4 border border-gray-100 rounded-xl bg-gray-50">
+                        <h3 class="font-bold text-blue-800 mb-2">Entidades Principales</h3>
+                        <ul class="text-sm space-y-2 text-gray-600">
+                            <li>• <strong>tpaciente</strong>: Datos personales y demográficos.</li>
+                            <li>• <strong>tmedico</strong>: Información profesional de contacto.</li>
+                            <li>• <strong>tenfermedad</strong>: Catálogo de patologías.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 border border-gray-100 rounded-xl bg-gray-50">
+                        <h3 class="font-bold text-emerald-800 mb-2">Entidades de Negocio</h3>
+                        <ul class="text-sm space-y-2 text-gray-600">
+                            <li>• <strong>tespecialidad</strong>: Áreas médicas disponibles.</li>
+                            <li>• <strong>tdiagnostico</strong>: Registro de la consulta médica.</li>
+                        </ul>
+                    </div>
+                    <div class="p-4 border border-gray-100 rounded-xl bg-gray-50">
+                        <h3 class="font-bold text-purple-800 mb-2">Tablas Relacionales</h3>
+                        <ul class="text-sm space-y-2 text-gray-600">
+                            <li>• <strong>tespecialidaddelmedico</strong>: Asigna especialidades a médicos.</li>
+                            <li>• <strong>tenfermedadeneldiagnostico</strong>: Detalla enfermedades por diagnóstico.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <section class="mb-12">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-2xl font-bold">Script SQL Completo</h2>
-                <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded">script_clinica.sql</span>
-            </div>
-            
-            <div class="bg-gray-900 rounded-lg shadow-2xl overflow-hidden">
-                <pre><code class="language-sql">-- ==========================================================
--- PROYECTO: SISTEMA DE CLÍNICA
--- AUTOR: Zavaleta Fuentes Paolo Enrique
--- ==========================================================
-
--- 1. LIMPIEZA DE ENTORNO (DDL)
+        <!-- Sección: Código SQL -->
+        <section id="codigo" class="scroll-mt-20">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                <i data-lucide="code" class="text-blue-600"></i> Script de Creación e Inserción
+            </h2>
+            <div class="code-block shadow-2xl">
+                <div class="bg-slate-800 px-4 py-2 flex items-center justify-between border-b border-slate-700">
+                    <span class="text-slate-400 text-xs font-mono uppercase">clinica_schema.sql</span>
+                    <button onclick="copyCode()" class="text-slate-400 hover:text-white transition flex items-center gap-1 text-xs">
+                        <i data-lucide="copy" class="w-3 h-3"></i> Copiar
+                    </button>
+                </div>
+                <pre><code class="language-sql">-- ELIMINAR TABLAS EXISTENTES
 drop table tenfermedadeneldiagnostico cascade constraints;
 drop table tespecialidaddelmedico cascade constraints;
 drop table tdiagnostico cascade constraints;
@@ -56,7 +125,7 @@ drop table tespecialidad cascade constraints;
 drop table tmedico cascade constraints;
 drop table tpaciente cascade constraints;
 
--- 2. CREACIÓN DE TABLAS
+-- CREACIÓN DE TABLAS
 create table tpaciente (
     codp varchar2(4) primary key,
     tipodocp varchar2(15),
@@ -68,7 +137,6 @@ create table tpaciente (
     generop char(1)
 );
 
--- [Resto del código de creación...]
 create table tmedico (
     codm varchar2(4) primary key,
     tipodocm varchar2(15),
@@ -81,50 +149,106 @@ create table tmedico (
     generom char(1)
 );
 
--- [Inserción de datos...]
+create table tdiagnostico (
+    codd varchar2(4) primary key,
+    fechahorad timestamp,
+    descripciond varchar2(100),
+    codp varchar2(4),
+    codm varchar2(4),
+    foreign key (codp) references tpaciente(codp),
+    foreign key (codm) references tmedico(codm)
+);
+
+-- INSERCIÓN DE DATOS DE PRUEBA
 insert into tpaciente values ('p01','dni','11111111','salas','rivas','juan',date '2000-02-02','m');
 insert into tmedico values ('m1','dni','33333333','zela','ramirez','javier','999999999',date '1970-10-10','m');
+insert into tespecialidad values ('esp1','otorrinolaringologia','ojos nariz y boca');
+insert into tdiagnostico values ('d1',timestamp '2022-02-25 10:00:00','sinusitis aguda y alergia','p01','m1');</code></pre>
+            </div>
+        </section>
 
--- 3. VISTAS Y REPORTES AVANZADOS
--- Vista para médicos y sus especialidades
-create view v_medicos_especialidades as
+        <!-- Sección: Vistas y Consultas -->
+        <section id="vistas" class="scroll-mt-20 pb-20">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-2">
+                <i data-lucide="file-search" class="text-blue-600"></i> Análisis y Reportes (Vistas)
+            </h2>
+            
+            <div class="grid grid-cols-1 gap-8">
+                <!-- Consulta 1 y 2 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-l-4 border-blue-500 pl-3">1 & 2. Gestión de Médicos y Especialidades</h3>
+                    <p class="text-sm text-gray-600 mb-4">Integración de datos maestros de médicos con sus certificaciones para análisis de carga académica.</p>
+                    <div class="bg-gray-900 rounded-lg p-4 font-mono text-sm text-blue-300">
+                        <pre><code class="language-sql">create view v_medicos_especialidades as
 select m.*, e.nombreesp, e.descripcionesp, em.fechaobtencion
 from tmedico m
 join tespecialidaddelmedico em on m.codm = em.codm
 join tespecialidad e on em.codesp = e.codesp;
 
--- Consulta: Médicos con 2 o más especialidades
-select nombresm, count(*) as cantidad
+-- Conteo por médico
+select nombresm, count(*) as cantidad_especialidades
 from v_medicos_especialidades
-group by nombresm, paternom, maternom
-having count(*) >= 2;
-                </code></pre>
-            </div>
-        </section>
-
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold mb-6">Análisis de Consultas</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
-                    <h3 class="font-bold text-lg mb-2 text-blue-700">Vistas Dinámicas</h3>
-                    <p class="text-sm text-gray-600">Se implementaron vistas para simplificar JOINs complejos, permitiendo reportes rápidos sobre la disponibilidad de médicos por especialidad.</p>
+group by nombresm, paternom, maternom;</code></pre>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-                    <h3 class="font-bold text-lg mb-2 text-green-700">Integridad Referencial</h3>
-                    <p class="text-sm text-gray-600">Uso de <code>CASCADE CONSTRAINTS</code> para asegurar que el despliegue del script sea limpio y sin conflictos de llaves foráneas.</p>
+
+                <!-- Consulta 4 y 5 -->
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 border-l-4 border-emerald-500 pl-3">4 & 5. Auditoría de Datos (Elementos sin Uso)</h3>
+                    <p class="text-sm text-gray-600 mb-4">Identificación de enfermedades no diagnosticadas y especialidades sin staff médico asignado utilizando subconsultas <code class="bg-gray-100 px-1 rounded">NOT IN</code>.</p>
+                    <div class="bg-gray-900 rounded-lg p-4 font-mono text-sm text-emerald-300">
+                        <pre><code class="language-sql">create or replace view v_enfermedades_no_detectadas as
+select * from tenfermedad
+where code not in (select code from tenfermedadeneldiagnostico);
+
+create or replace view v_especialidades_sin_medico as
+select * from tespecialidad
+where codesp not in (select codesp from tespecialidaddelmedico);</code></pre>
+                    </div>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <footer class="bg-gray-100 py-8 border-t border-gray-200">
-        <div class="max-w-4xl mx-auto px-6 text-center text-gray-500 text-sm">
-            <p>Repositorio creado para fines académicos. Universidad © 2026</p>
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-sm mb-4">Proyecto académico desarrollado para el curso de Bases de Datos.</p>
+            <div class="flex justify-center gap-6">
+                <a href="#" class="hover:text-white transition">Documentación</a>
+                <a href="#" class="hover:text-white transition">GitHub Repo</a>
+                <a href="#" class="hover:text-white transition">LinkedIn</a>
+            </div>
+            <p class="mt-8 text-xs text-slate-600 italic">© 2026 Paolo Enrique Zavaleta Fuentes</p>
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+    <script>
+        // Inicializar Iconos
+        lucide.createIcons();
+        // Inicializar Resaltado de Sintaxis
+        hljs.highlightAll();
+
+        function copyCode() {
+            const code = document.querySelector('pre code').innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = code;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Notificación simple
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="check" class="w-3 h-3 text-green-400"></i> <span class="text-green-400">Copiado</span>';
+            lucide.createIcons();
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                lucide.createIcons();
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
