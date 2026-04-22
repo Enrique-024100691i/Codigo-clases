@@ -3,128 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taller 2.3 - Vistas SQL - Clínica TodoSalud</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Taller 2.3 - Modelado de Base de Datos | Clínica TodoSalud</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .sql-code { background-color: #1e1e1e; color: #d4d4d4; padding: 1.5rem; border-radius: 0.5rem; overflow-x: auto; font-family: 'Courier New', Courier, monospace; }
-        .keyword { color: #569cd6; font-weight: bold; }
-        .string { color: #ce9178; }
-        .comment { color: #6a9955; font-style: italic; }
-        .table-name { color: #4ec9b0; }
+        :root {
+            --primary: #003366;
+            --secondary: #00509d;
+            --accent: #f0f4f8;
+            --text: #333;
+            --code-bg: #282c34;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+        }
+        header {
+            border-bottom: 3px solid var(--primary);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+        h1, h2, h3 { color: var(--primary); }
+        .info-panel {
+            background: var(--accent);
+            padding: 15px;
+            border-left: 5px solid var(--secondary);
+            margin: 20px 0;
+        }
+        .step {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        code {
+            background: var(--code-bg);
+            color: #abb2bf;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+        pre {
+            background: var(--code-bg);
+            color: #abb2bf;
+            padding: 15px;
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .sql-keyword { color: #c678dd; font-weight: bold; }
+        .sql-table { color: #e06c75; }
+        .sql-func { color: #61afef; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        table, th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+        th { background: var(--primary); color: white; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body>
 
-    <header class="bg-blue-900 text-white py-10 shadow-lg">
-        <div class="container mx-auto px-6 text-center">
-            <h1 class="text-4xl font-bold mb-2">Taller 2.3: Vistas en Oracle SQL</h1>
-            <p class="text-xl">Escuela Profesional de Ingeniería de Sistemas - UAC</p>
-            <div class="mt-4 text-sm opacity-80">
-                <p>Docente: Hugo Espetia Huamanga</p>
-                <p>Alumno: Zavaleta Fuentes Paolo</p>
-                <p>Año: 2026</p>
-            </div>
-        </div>
-    </header>
+<header>
+    <h1>Reporte Técnico: Gestión de Vistas SQL</h1>
+    <p><strong>Institución:</strong> Universidad Andina del Cusco</p>
+    <p><strong>Autor:</strong> Zavaleta Fuentes Paolo Enrique</p>
+    <p><strong>Fecha:</strong> 22 de abril, 2026</p>
+</header>
 
-    <main class="container mx-auto px-6 py-12 max-w-5xl">
-        
-        <!-- Introducción -->
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold text-blue-900 border-b-2 border-blue-200 pb-2 mb-4">Introducción</h2>
-            <p class="leading-relaxed text-gray-700">
-                Este proyecto detalla la implementación de consultas avanzadas y la creación de objetos tipo <strong>VIEW</strong> en el sistema de gestión de la <strong>Clínica TodoSalud</strong>. El enfoque principal es el dominio de la integridad referencial y la consolidación de información mediante uniones (JOINS) y subconsultas en Oracle SQL Developer.
-            </p>
-        </section>
+<section id="introduccion">
+    <h2>1. Introducción</h2>
+    <p>
+        Este proyecto detalla la implementación de objetos de base de datos tipo <strong>Vista (VIEW)</strong> y consultas avanzadas aplicadas a la 
+        <em>Clínica TodoSalud</em>. El enfoque principal es la transformación de datos crudos en información estratégica mediante el uso de 
+        uniones (JOINS), subconsultas de exclusión y funciones de agregado. [cite: 20, 24]
+    </p>
+</section>
 
-        <!-- Desarrollo SQL -->
-        <section class="mb-12">
-            <h2 class="text-2xl font-bold text-blue-900 border-b-2 border-blue-200 pb-2 mb-6">Desarrollo y Consultas SQL</h2>
+<section id="modelo-datos">
+    <h2>2. Estructura de Datos</h2>
+    <p>La base de datos se fundamenta en la integridad referencial entre las siguientes entidades:</p>
+    <ul>
+        <li><strong>tpaciente:</strong> Registro de usuarios de la clínica.</li>
+        <li><strong>tmedico:</strong> Personal médico y datos de contacto.</li>
+        <li><strong>tespecialidad:</strong> Catálogo de ramas médicas disponibles.</li>
+        <li><strong>tdiagnostico:</strong> Encuentros clínicos entre médicos y pacientes.</li>
+    </ul>
+</section>
 
-            <!-- Paso 5.1 -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-3">1. Consolidación de Información Médica</h3>
-                <p class="mb-4 text-gray-600 italic">Paso 5.1: Creación de vista para médicos y sus especialidades.</p>
-                <div class="sql-code">
-                    <span class="keyword">CREATE OR REPLACE VIEW</span> v_medicos_especialidades <span class="keyword">AS</span><br>
-                    <span class="keyword">SELECT</span> m.codm, m.tipodocm, m.nrodocm, m.paternom, m.maternom, m.nombresm, m.celularm, m.fechanac, m.g, e.nombreesp<br>
-                    <span class="keyword">FROM</span> <span class="table-name">tmedico</span> m<br>
-                    <span class="keyword">JOIN</span> <span class="table-name">tespecialidaddelmedico</span> em <span class="keyword">ON</span> m.codm = em.codm<br>
-                    <span class="keyword">JOIN</span> <span class="table-name">tespecialidad</span> e <span class="keyword">ON</span> em.codesp = e.codesp;<br><br>
-                    <span class="comment">-- Visualización de la vista</span><br>
-                    <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> v_medicos_especialidades;
-                </div>
-            </div>
+<section id="implementacion">
+    <h2>3. Desarrollo y Lógica SQL</h2>
 
-            <!-- Paso 5.2 y 5.3 -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-3">2. Conteo y Filtrado de Especialización</h3>
-                <p class="mb-4 text-gray-600 italic">Paso 5.2 y 5.3: Identificación de médicos con múltiples especialidades.</p>
-                <div class="sql-code">
-                    <span class="comment">-- Médicos con 2 o más especialidades</span><br>
-                    <span class="keyword">SELECT</span> nombresm, paternom, maternom, <span class="keyword">COUNT</span>(*) <span class="keyword">AS</span> cantidad_especialidades<br>
-                    <span class="keyword">FROM</span> v_medicos_especialidades<br>
-                    <span class="keyword">GROUP BY</span> nombresm, paternom, maternom<br>
-                    <span class="keyword">HAVING COUNT</span>(*) >= 2;
-                </div>
-            </div>
+    <div class="step">
+        <h3>Paso 5.1 & 5.2: Consolidación y Conteo de Especialidades</h3>
+        <p>Se crea la vista <code>v_medicos_especialidades</code> uniendo tres tablas para visualizar qué especialidad ostenta cada médico. [cite: 29, 30]</p>
+<pre>
+<span class="sql-keyword">CREATE VIEW</span> v_medicos_especialidades <span class="sql-keyword">AS</span>
+<span class="sql-keyword">SELECT</span> m.*, e.nombreesp, em.fechaobtencion
+<span class="sql-keyword">FROM</span> tmedico m
+<span class="sql-keyword">JOIN</span> tespecialidaddelmedico em <span class="sql-keyword">ON</span> m.codm = em.codm
+<span class="sql-keyword">JOIN</span> tespecialidad e <span class="sql-keyword">ON</span> em.codesp = e.codesp;</pre>
+        <p>Posteriormente, se utiliza <code>COUNT(*)</code> y <code>GROUP BY</code> para determinar la carga de especialización por profesional. [cite: 42]</p>
+    </div>
 
-            <!-- Paso 5.4 -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-3">3. Identificación de Brechas (Registros Huérfanos)</h3>
-                <p class="mb-4 text-gray-600 italic">Paso 5.4: Detección de enfermedades que nunca han sido diagnosticadas.</p>
-                <div class="sql-code">
-                    <span class="keyword">CREATE OR REPLACE VIEW</span> v_enfermedades_no_detectadas <span class="keyword">AS</span><br>
-                    <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="table-name">tenfermedad</span><br>
-                    <span class="keyword">WHERE</span> code <span class="keyword">NOT IN</span> (<span class="keyword">SELECT</span> code <span class="keyword">FROM</span> <span class="table-name">tenfermedadeneldiagnostico</span>);<br><br>
-                    <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> v_enfermedades_no_detectadas;
-                </div>
-            </div>
+    <div class="step">
+        <h3>Paso 5.4: Detección de Brechas (Enfermedades no detectadas)</h3>
+        <p>Utilizando la lógica de <strong>exclusión</strong> con <code>NOT IN</code>, identificamos patologías que no han sido asignadas en ningún diagnóstico actual. [cite: 67, 74]</p>
+<pre>
+<span class="sql-keyword">CREATE OR REPLACE VIEW</span> v_enfermedades_no_detectadas <span class="sql-keyword">AS</span>
+<span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> tenfermedad
+<span class="sql-keyword">WHERE</span> code <span class="sql-keyword">NOT IN</span> (<span class="sql-keyword">SELECT</span> code <span class="sql-keyword">FROM</span> tenfermedadeneldiagnostico);</pre>
+    </div>
 
-            <!-- Paso 5.5 y 5.6 -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-3">4. Análisis de Especialidades sin Cobertura</h3>
-                <p class="mb-4 text-gray-600 italic">Paso 5.5 y 5.6: Especialidades que no cuentan con médicos asignados.</p>
-                <div class="sql-code">
-                    <span class="keyword">CREATE OR REPLACE VIEW</span> v_especialidades_sin_medico <span class="keyword">AS</span><br>
-                    <span class="keyword">SELECT</span> * <span class="keyword">FROM</span> <span class="table-name">tespecialidad</span><br>
-                    <span class="keyword">WHERE</span> codesp <span class="keyword">NOT IN</span> (<span class="keyword">SELECT</span> codesp <span class="keyword">FROM</span> <span class="table-name">tespecialidaddelmedico</span>);<br><br>
-                    <span class="comment">-- Cuantificar el déficit</span><br>
-                    <span class="keyword">SELECT COUNT</span>(*) <span class="keyword">AS</span> total_sin_medico <span class="keyword">FROM</span> v_especialidades_sin_medico;
-                </div>
-            </div>
+    <div class="step">
+        <h3>Paso 5.7: Auditoría de Calidad (Diagnósticos Incompletos)</h3>
+        <p>Esta consulta detecta errores humanos: pacientes con una cita médica registrada pero sin una enfermedad formalmente vinculada en el sistema. [cite: 100, 101]</p>
+<pre>
+<span class="sql-keyword">CREATE OR REPLACE VIEW</span> v_pacientes_sin_enfermedad <span class="sql-keyword">AS</span>
+<span class="sql-keyword">SELECT</span> p.nombresp, p.paternop, p.maternop
+<span class="sql-keyword">FROM</span> tpaciente p
+<span class="sql-keyword">JOIN</span> tdiagnostico d <span class="sql-keyword">ON</span> p.codp = d.codp
+<span class="sql-keyword">WHERE</span> d.codd <span class="sql-keyword">NOT IN</span> (<span class="sql-keyword">SELECT</span> codd <span class="sql-keyword">FROM</span> tenfermedadeneldiagnostico);</pre>
+    </div>
+</section>
 
-            <!-- Paso 5.7 -->
-            <div class="mb-8">
-                <h3 class="text-xl font-semibold mb-3">5. Auditoría de Calidad: Diagnósticos Incompletos</h3>
-                <p class="mb-4 text-gray-600 italic">Paso 5.7: Pacientes que tienen un diagnóstico pero sin enfermedad asociada.</p>
-                <div class="sql-code">
-                    <span class="keyword">CREATE OR REPLACE VIEW</span> v_pacientes_sin_enfermedad <span class="keyword">AS</span><br>
-                    <span class="keyword">SELECT</span> p.nombresp, p.paternop, p.maternop<br>
-                    <span class="keyword">FROM</span> <span class="table-name">tpaciente</span> p<br>
-                    <span class="keyword">JOIN</span> <span class="table-name">tdiagnostico</span> d <span class="keyword">ON</span> p.codp = d.codp<br>
-                    <span class="keyword">WHERE</span> d.codd <span class="keyword">NOT IN</span> (<span class="keyword">SELECT</span> codd <span class="keyword">FROM</span> <span class="table-name">tenfermedadeneldiagnostico</span>);
-                </div>
-            </div>
-        </section>
+<section id="conclusiones" class="info-panel">
+    <h2>4. Conclusión</h2>
+    <p>
+        La implementación de estas vistas permite a la clínica automatizar auditorías operativas y mejorar la toma de decisiones asistenciales, 
+        asegurando que ningún paciente quede con registros incompletos y optimizando la oferta médica. [cite: 116, 117]
+    </p>
+</section>
 
-        <!-- Conclusiones -->
-        <section class="mb-12 bg-blue-50 p-8 rounded-xl border-l-4 border-blue-900">
-            <h2 class="text-2xl font-bold text-blue-900 mb-4">Conclusión</h2>
-            <p class="text-gray-700 italic">
-                "La culminación de esta actividad práctica ha permitido consolidar el dominio técnico sobre la implementación de Vistas (Views) y Joins, transformando datos aislados en activos estratégicos para la salud del paciente y la toma de decisiones clínicas."
-            </p>
-        </section>
-
-    </main>
-
-    <footer class="bg-gray-800 text-white py-6 mt-12">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2026 Universidad Andina del Cusco - Ingeniería de Sistemas</p>
-            <p class="text-sm mt-2 opacity-60 italic">Repositorio: https://github.com/Enrique-024100691i/Codigo-clases</p>
-        </div>
-    </footer>
+<footer>
+    <p><em>Repositorio generado para el curso de Modelado de Bases de Datos. 2026.</em></p>
+</footer>
 
 </body>
 </html>
