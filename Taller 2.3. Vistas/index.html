@@ -1,55 +1,96 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Proyecto SQL - Clínica TodoSalud</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller de Vistas y Consultas SQL - Clínica TodoSalud</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: auto; padding: 20px; background-color: #f4f7f6; }
-        header { background: #2c3e50; color: white; padding: 20px; border-radius: 8px; text-align: center; }
-        .card { background: white; padding: 20px; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        code { background: #272822; color: #f8f8f2; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; }
-        pre { background: #272822; color: #f8f8f2; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 900px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
+        header { background: #2c3e50; color: #fff; padding: 20px; text-align: center; border-radius: 8px; }
+        .container { background: #fff; padding: 30px; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         h2 { color: #2980b9; border-bottom: 2px solid #2980b9; padding-bottom: 5px; }
-        .badge { background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; }
+        code { background: #f8f8f8; border: 1px solid #ddd; padding: 2px 5px; border-radius: 4px; font-family: 'Courier New', Courier, monospace; }
+        pre { background: #2d3436; color: #dfe6e9; padding: 15px; overflow-x: auto; border-radius: 5px; }
+        .info-box { background: #e7f3fe; border-left: 6px solid #2196F3; margin: 20px 0; padding: 15px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #2980b9; color: white; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Taller 2.3: Vistas en SQL</h1>
-    <p>Universidad Andina del Cusco - Ingeniería de Sistemas</p>
+    <h1>Taller 2.3: Vistas y Análisis Clínico</h1>
+    <p>Autor: Zavaleta Fuentes Paolo Enrique | 2026</p>
 </header>
 
-<div class="card">
-    <h2>Introducción</h2>
-    <p>Este informe detalla la creación de objetos tipo <strong>VIEW</strong> para la gestión de la Clínica TodoSalud, enfocándose en la integridad referencial y la consolidación de datos distribuidos en tablas normalizadas.</p>
-</div>
+<div class="container">
+    <h2>1. Introducción del Proyecto</h2>
+    <p>Este proyecto se centra en la gestión de datos de la <strong>Clínica TodoSalud</strong> utilizando Oracle SQL. El objetivo es transformar datos crudos en información estratégica mediante el uso de <code>VIEWS</code> (Vistas), <code>JOINS</code> y subconsultas complejas.</p>
+    
+    <div class="info-box">
+        <strong>Objetivo:</strong> Fortalecer la capacidad analítica mediante el dominio de la integridad referencial y la consolidación de tablas normalizadas como Pacientes, Médicos, Especialidades y Diagnósticos.
+    </div>
 
-<div class="card">
-    <h2>Lógica de Consultas Implementada</h2>
+    <h2>2. Modelo de Datos (Esquema)</h2>
+    <p>El sistema se basa en 7 tablas principales interconectadas:</p>
     <ul>
-        <li><strong>JOINS Complejos:</strong> Unificación de tablas <code>tmedico</code>, <code>tespecialidad</code> y su tabla de intersección.</li>
-        <li><strong>Funciones de Agregado:</strong> Uso de <code>COUNT(*)</code> para cuantificar especialidades.</li>
-        <li><strong>Filtros de Grupo:</strong> Aplicación de <code>HAVING</code> para detectar médicos con múltiples especialidades.</li>
-        <li><strong>Subconsultas de Exclusión:</strong> Uso de <code>NOT IN</code> para detectar brechas en el servicio médico.</li>
+        <li><strong>tpaciente:</strong> Datos personales de los pacientes.</li>
+        <li><strong>tmedico:</strong> Registro del cuerpo médico.</li>
+        <li><strong>tespecialidad:</strong> Catálogo de especialidades médicas.</li>
+        <li><strong>tdiagnostico:</strong> Encuentros clínicos entre médicos y pacientes.</li>
+        <li><strong>tespecialidaddelmedico:</strong> Tabla de intersección (Médico-Especialidad).</li>
+        <li><strong>tenfermedad:</strong> Catálogo de patologías.</li>
+        <li><strong>tenfermedadeneldiagnostico:</strong> Relación entre diagnósticos y enfermedades.</li>
     </ul>
-</div>
 
-<div class="card">
-    <h2>Código SQL Destacado</h2>
-    <p>Ejemplo de creación de vista para auditoría de calidad de datos:</p>
+    <h2>3. Implementación SQL Destacada</h2>
+
+    <h3>A. Consolidación de Información Médica</h3>
+    <p>Se creó la vista <code>v_medicos_especialidades</code> para unificar la información del médico con su nombre de especialidad textual, eliminando la necesidad de escribir JOINS repetitivos.</p>
     <pre>
-CREATE OR REPLACE VIEW v_pacientes_sin_enfermedad AS
-SELECT p.nombresp, p.paternop, p.maternop
-FROM tpaciente p
-JOIN tdiagnostico d ON p.codp = d.codp
-WHERE d.codd NOT IN (SELECT codd FROM tenfermedadeneldiagnostico);</pre>
-</div>
+CREATE VIEW v_medicos_especialidades AS
+SELECT m.*, e.nombreesp, e.descripcionesp, em.fechaobtencion
+FROM tmedico m
+JOIN tespecialidaddelmedico em ON m.codm = em.codm
+JOIN tespecialidad e ON em.codesp = e.codesp;</pre>
 
-<div class="card">
-    <h2>Conclusión</h2>
-    <p>El diseño de estas soluciones permite a los ingenieros mejorar la toma de decisiones basada en datos estructurados, garantizando que la información fluya de manera lógica desde el código hasta la gerencia asistencial.</p>
+    <h3>B. Identificación de Brechas (Registros Huérfanos)</h3>
+    <p>Una funcionalidad crítica es detectar qué enfermedades no se han diagnosticado aún o qué especialidades no tienen médicos asignados. Esto se logra con operadores <code>NOT IN</code>:</p>
+    <pre>
+CREATE OR REPLACE VIEW v_especialidades_sin_medico AS
+SELECT * FROM tespecialidad
+WHERE codesp NOT IN (SELECT codesp FROM tespecialidaddelmedico);</pre>
+
+    <h3>C. Auditoría de Calidad</h3>
+    <p>La vista <code>v_pacientes_sin_enfermedad</code> identifica errores de registro donde existe un diagnóstico pero no se vinculó formalmente a una enfermedad, permitiendo corregir omisiones administrativas.</p>
+
+    <h2>4. Análisis de Resultados</h2>
+    <table>
+        <tr>
+            <th>Consulta</th>
+            <th>Propósito</th>
+            <th>Métrica de Valor</th>
+        </tr>
+        <tr>
+            <td>Count & Group By</td>
+            <td>Contar especialidades por médico.</td>
+            <td>Productividad médica.</td>
+        </tr>
+        <tr>
+            <td>Having >= 2</td>
+            <td>Médicos con alta especialización.</td>
+            <td>Nivel de experticia clínica.</td>
+        </tr>
+        <tr>
+            <td>Exclusión</td>
+            <td>Especialidades sin cobertura.</td>
+            <td>Planificación de contrataciones.</td>
+        </tr>
+    </table>
+
+    <h2>5. Conclusiones</h2>
+    <p>Según el informe detallado en el PDF, la implementación de estas vistas permite a la <strong>Clínica TodoSalud</strong> realizar auditorías operativas eficientes. Como futuros ingenieros, el dominio de estos objetos en <em>Oracle SQL Developer</em> nos permite diseñar soluciones que mejoren la toma de decisiones basada en datos precisos.</p>
 </div>
 
 </body>
